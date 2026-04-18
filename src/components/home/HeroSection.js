@@ -159,7 +159,7 @@ const HeroSection = ({ setPage }) => {
         </div>
       </div>
 
-      <div className="tm-hero__metrics">
+      <div className="tm-hero__metrics" style={{ marginTop: "50px" }}>
         {[
           {
             icon: "clock",

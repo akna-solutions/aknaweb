@@ -63,7 +63,7 @@ const ReferencesPage = ({ setPage }) => {
     { value: "500+", label: "Mutlu Müşteri" },
     { value: "2000+", label: "Takip Edilen Araç" },
     { value: "%98", label: "Müşteri Memnuniyeti" },
-    { value: "15+", label: "Yıllık Tecrübe" },
+    { value: "32+", label: "Yıllık Tecrübe" },
   ];
 
   return (
@@ -144,27 +144,9 @@ const ReferencesPage = ({ setPage }) => {
             </div>
 
             <div className="sector-item">
-              <div className="sector-icon">❄️</div>
-              <h3>Soğuk Zincir</h3>
-              <p>Gıda ve ilaç taşımacılığı</p>
-            </div>
-
-            <div className="sector-item">
               <div className="sector-icon">🏭</div>
               <h3>Üretim & Dağıtım</h3>
               <p>Fabrika ve depo dağıtım sistemleri</p>
-            </div>
-
-            <div className="sector-item">
-              <div className="sector-icon">🛒</div>
-              <h3>E-Ticaret</h3>
-              <p>Online mağaza lojistik çözümleri</p>
-            </div>
-
-            <div className="sector-item">
-              <div className="sector-icon">🏗️</div>
-              <h3>İnşaat</h3>
-              <p>İnşaat malzemesi taşımacılığı</p>
             </div>
           </div>
         </div>

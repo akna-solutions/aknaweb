@@ -64,21 +64,21 @@ const TrackingPage = ({ setPage }) => {
       <section className="tracking-hero">
         <div className="container">
           <h1>Gerçek Zamanlı Araç Takibi</h1>
-          <p>Filonuzdaki tüm araçları anlık olarak takip edin</p>
+          <p>Yüklerinizi anlık olarak takip edin</p>
         </div>
       </section>
 
       <section className="tracking-section">
         <div className="container">
           <div className="tracking-search">
-            <h2>Araç Sorgulama</h2>
+            <h2>Yük Sorgulama</h2>
             <form onSubmit={handleTracking}>
               <div className="search-box">
                 <input
                   type="text"
                   value={trackingCode}
                   onChange={(e) => setTrackingCode(e.target.value)}
-                  placeholder="Araç kodunu girin (örn: AK001, AK002, AK003)"
+                  placeholder="Yük kodunu girin"
                   required
                 />
                 <button
@@ -89,9 +89,6 @@ const TrackingPage = ({ setPage }) => {
                   {loading ? "Sorgulanıyor..." : "Sorgula"}
                 </button>
               </div>
-              <p className="help-text">
-                Demo için kullanabilirsiniz: AK001, AK002, AK003
-              </p>
             </form>
           </div>
 

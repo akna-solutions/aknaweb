@@ -86,13 +86,6 @@ const Navigation = ({ currentPage, setPage }) => {
 
           <div className="tm-actions">
             <button
-              className="tm-login"
-              type="button"
-              onClick={() => handleNav("contact")}
-            >
-              Giriş Yap
-            </button>
-            <button
               className="tm-cta"
               type="button"
               onClick={() => handleNav("quote")}
@@ -180,13 +173,6 @@ const Navigation = ({ currentPage, setPage }) => {
         </nav>
 
         <div className="tm-mobile-panel__foot">
-          <button
-            className="tm-login-mobile"
-            type="button"
-            onClick={() => handleNav("contact")}
-          >
-            Giriş Yap
-          </button>
           <button
             className="tm-cta-mobile"
             type="button"
