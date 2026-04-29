@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Navigation from "../components/Navigation";
 
 const CITY_DIST = {
@@ -153,7 +153,7 @@ const QuotePage = ({ setPage }) => {
   const [submitted, setSubmitted] = useState(false);
   const debounceRef = useRef(null);
 
-  const compute = () => {
+  const compute = useCallback(() => {
     if (!origin.trim() || !dest.trim()) {
       setQuoteData(null);
       return;
@@ -165,13 +165,13 @@ const QuotePage = ({ setPage }) => {
     const progress = Math.min(100, Math.round((dist / 1000) * 100));
     setQuoteData({ dist, dur, price, progress });
     setTimeout(() => setFillWidth(progress), 80);
-  };
+  }, [origin, dest, weight, vehicle]);
 
   useEffect(() => {
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(compute, 320);
     return () => clearTimeout(debounceRef.current);
-  }, [origin, dest, weight, vehicle, compute]);
+  }, [compute]);
 
   useEffect(() => {
     if (!quoteData) setFillWidth(0);
