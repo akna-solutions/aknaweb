@@ -127,7 +127,6 @@ const StatusBadge = ({ load }) => {
 };
 
 const HeroSection = ({ load }) => {
-  const stops = load.loadStops || [];
   const statsData = [
     {
       label: "Toplam Mesafe",

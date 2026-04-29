@@ -70,7 +70,7 @@ const Navigation = ({ currentPage, setPage }) => {
             </span>
           </button>
 
-          <ul className="tm-menu" role="list">
+          <ul className="tm-menu">
             {menuItems.map((item) => (
               <li key={item.id} className="tm-menu__item">
                 <button
@@ -157,7 +157,7 @@ const Navigation = ({ currentPage, setPage }) => {
         </div>
 
         <nav className="tm-mobile-panel__body" aria-label="Mobil ana gezinme">
-          <ul className="tm-mobile-menu" role="list">
+          <ul className="tm-mobile-menu">
             {menuItems.map((item) => (
               <li key={item.id} className="tm-mobile-menu__item">
                 <button
