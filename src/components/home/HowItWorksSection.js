@@ -211,14 +211,6 @@ const HowItWorksSection = ({ setPage }) => (
               </div>
               <div className="tm-step-title">{s.title}</div>
               <p className="tm-step-desc">{s.desc}</p>
-              <div className="tm-step-detail">
-                {s.details.map((d) => (
-                  <div className="tm-step-detail-row" key={d}>
-                    <span className="tm-step-detail-dot"></span>
-                    {d}
-                  </div>
-                ))}
-              </div>
               {s.mini}
             </div>
           </div>
