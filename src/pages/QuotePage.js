@@ -171,7 +171,7 @@ const QuotePage = ({ setPage }) => {
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(compute, 320);
     return () => clearTimeout(debounceRef.current);
-  }, [origin, dest, weight, vehicle]);
+  }, [origin, dest, weight, vehicle, compute]);
 
   useEffect(() => {
     if (!quoteData) setFillWidth(0);

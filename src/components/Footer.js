@@ -120,16 +120,16 @@ const Footer = ({ setPage }) => (
           <h5>Çözümler</h5>
           <ul>
             <li>
-              <a href="#">AI Fiyatlama</a>
+              <button type="button">AI Fiyatlama</button>
             </li>
             <li>
-              <a href="#">Yük Takibi</a>
+              <button type="button">Yük Takibi</button>
             </li>
             <li>
-              <a href="#">Taşıyıcı Ağı</a>
+              <button type="button">Taşıyıcı Ağı</button>
             </li>
             <li>
-              <a href="#">Operasyon Yönetimi</a>
+              <button type="button">Operasyon Yönetimi</button>
             </li>
           </ul>
         </div>
@@ -183,8 +183,8 @@ const Footer = ({ setPage }) => (
           © 2026 AKNA. Tüm hakları saklıdır.
         </span>
         <nav className="tm-footer-legal" aria-label="Yasal linkler">
-          <a href="#">Gizlilik Politikası</a>
-          <a href="#">Kullanım Koşulları</a>
+          <button type="button">Gizlilik Politikası</button>
+          <button type="button">Kullanım Koşulları</button>
         </nav>
       </div>
     </div>
