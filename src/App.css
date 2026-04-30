@@ -962,6 +962,7 @@ body {
   background: var(--bg-base);
   padding: 96px 0 0;
   position: relative;
+  overflow: hidden;
 }
 
 .tm-hiw::before {
