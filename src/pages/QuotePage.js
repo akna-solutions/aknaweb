@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Navigation from "../components/Navigation";
+import { State, City } from "country-state-city";
 
+/* ── Distance lookup (km) ── */
 const CITY_DIST = {
   "istanbul-ankara": 454,
   "istanbul-izmir": 483,
@@ -84,10 +86,21 @@ const CARGO_TYPES = [
   "İnşaat Malzemesi",
 ];
 
+/* ── Geography helpers (country-state-city) ── */
+const TR_STATES = State.getStatesOfCountry("TR");
+const STATE_NAMES = TR_STATES.map((s) => s.name);
+
+function getDistricts(cityName) {
+  const state = TR_STATES.find((s) => s.name === cityName);
+  if (!state) return [];
+  return City.getCitiesOfState("TR", state.isoCode).map((c) => c.name);
+}
+
+/* ── Calc helpers ── */
 function getDistance(a, b) {
-  const key1 = `${a.toLowerCase().trim()}-${b.toLowerCase().trim()}`;
-  const key2 = `${b.toLowerCase().trim()}-${a.toLowerCase().trim()}`;
-  return CITY_DIST[key1] || CITY_DIST[key2] || Math.floor(Math.random() * 600 + 150);
+  const k1 = `${a.toLowerCase().trim()}-${b.toLowerCase().trim()}`;
+  const k2 = `${b.toLowerCase().trim()}-${a.toLowerCase().trim()}`;
+  return CITY_DIST[k1] || CITY_DIST[k2] || Math.floor(Math.random() * 600 + 150);
 }
 
 function getDuration(km) {
@@ -102,18 +115,133 @@ function calcPrice(dist, vtype, weight) {
   let wMul = weight > 0 ? Math.max(1, weight / 5) : 1;
   if (vtype === "Parsiyel") wMul = Math.max(0.4, wMul * 0.5);
   const price = Math.round((base * wMul) / 100) * 100;
-  const low = Math.round((price * 0.92) / 100) * 100;
-  const high = Math.round((price * 1.08) / 100) * 100;
-  return { price, low, high };
+  return {
+    price,
+    low: Math.round((price * 0.92) / 100) * 100,
+    high: Math.round((price * 1.08) / 100) * 100,
+  };
 }
 
 function fmt(n) {
   return new Intl.NumberFormat("tr-TR").format(n);
 }
 
+/* ══════════════════════════════════════════
+   COMBOBOX — arama destekli açılır liste
+══════════════════════════════════════════ */
+const ComboBox = ({ options, value, onChange, placeholder, disabled, hasError }) => {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState(value || "");
+  const containerRef = useRef(null);
+
+  /* Dışarıdan value değiştiğinde (ör. il seçilince ilçe sıfırlanır) */
+  useEffect(() => {
+    setQuery(value || "");
+  }, [value]);
+
+  /* Dışarı tıklanınca kapat ve geçersiz girişi geri al */
+  useEffect(() => {
+    const onOutside = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setOpen(false);
+        if (query && !options.includes(query)) setQuery(value || "");
+      }
+    };
+    document.addEventListener("mousedown", onOutside);
+    return () => document.removeEventListener("mousedown", onOutside);
+  }, [query, value, options]);
+
+  const filtered = query
+    ? options.filter((o) => o.toLowerCase().includes(query.toLowerCase()))
+    : options;
+
+  const LIMIT = 10;
+  const visible = filtered.slice(0, LIMIT);
+  const extra = filtered.length - LIMIT;
+
+  const select = (opt) => {
+    setQuery(opt);
+    onChange(opt);
+    setOpen(false);
+  };
+
+  return (
+    <div
+      className={[
+        "qp-combo",
+        hasError ? "qp-combo-err" : "",
+        disabled ? "qp-combo-disabled" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      ref={containerRef}
+    >
+      <input
+        type="text"
+        className="qp-combo-input"
+        placeholder={placeholder}
+        value={query}
+        disabled={disabled}
+        autoComplete="off"
+        aria-autocomplete="list"
+        aria-expanded={open}
+        role="combobox"
+        onChange={(e) => {
+          setQuery(e.target.value);
+          setOpen(true);
+          if (!e.target.value) onChange("");
+        }}
+        onFocus={() => { if (!disabled) setOpen(true); }}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") { setOpen(false); setQuery(value || ""); }
+          if (e.key === "Enter" && visible.length === 1) select(visible[0]);
+          if (e.key === "Tab") setOpen(false);
+        }}
+      />
+      <span className="qp-combo-chevron" aria-hidden="true">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+          <path d="M1 1l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </span>
+
+      {open && !disabled && (
+        <ul className="qp-combo-list" role="listbox">
+          {visible.length === 0 ? (
+            <li className="qp-combo-empty">Sonuç bulunamadı</li>
+          ) : (
+            <>
+              {visible.map((opt) => (
+                <li
+                  key={opt}
+                  className={`qp-combo-item${opt === value ? " selected" : ""}`}
+                  role="option"
+                  aria-selected={opt === value}
+                  onPointerDown={(e) => { e.preventDefault(); select(opt); }}
+                >
+                  {opt}
+                </li>
+              ))}
+              {extra > 0 && (
+                <li className="qp-combo-more">+{extra} il daha — aramaya devam edin</li>
+              )}
+            </>
+          )}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════
+   MAIN PAGE
+══════════════════════════════════════════ */
 const QuotePage = ({ setPage }) => {
-  const [origin, setOrigin] = useState("");
-  const [dest, setDest] = useState("");
+  const [originCity, setOriginCity] = useState("");
+  const [originDistrict, setOriginDistrict] = useState("");
+  const [destCity, setDestCity] = useState("");
+  const [destDistrict, setDestDistrict] = useState("");
+  const [contactName, setContactName] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
   const [cargoType, setCargoType] = useState("");
   const [weight, setWeight] = useState("");
   const [pallet, setPallet] = useState("");
@@ -124,34 +252,43 @@ const QuotePage = ({ setPage }) => {
   const [confirmed, setConfirmed] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const originDistricts = getDistricts(originCity);
+  const destDistricts = getDistricts(destCity);
+
+  const originLabel = originDistrict ? `${originCity} / ${originDistrict}` : originCity;
+  const destLabel = destDistrict ? `${destCity} / ${destDistrict}` : destCity;
+
+  const clearErr = (key) => setErrors((p) => { const n = { ...p }; delete n[key]; return n; });
+
   const validate = () => {
     const e = {};
-    if (!origin.trim()) e.origin = "Çıkış noktası gerekli";
-    if (!dest.trim()) e.dest = "Varış noktası gerekli";
+    if (!originCity) e.originCity = "Yükleme ili seçiniz";
+    if (!destCity) e.destCity = "Teslimat ili seçiniz";
     if (!weight || parseFloat(weight) <= 0) e.weight = "Ağırlık gerekli";
+    if (!contactName.trim()) e.contactName = "Ad Soyad gerekli";
+    if (!contactPhone.trim()) {
+      e.contactPhone = "Telefon numarası gerekli";
+    } else if (contactPhone.replace(/\D/g, "").length < 10) {
+      e.contactPhone = "En az 10 haneli numara giriniz";
+    }
     return e;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const e2 = validate();
-    if (Object.keys(e2).length > 0) {
-      setErrors(e2);
-      return;
-    }
+    const errs = validate();
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
     setErrors({});
     setLoading(true);
     setResult(null);
-
-    const delay = 1200 + Math.random() * 600;
     setTimeout(() => {
-      const dist = getDistance(origin, dest);
+      const dist = getDistance(originCity, destCity);
       const dur = getDuration(dist);
       const w = parseFloat(weight) || 0;
       const { price, low, high } = calcPrice(dist, vehicle, w);
       setResult({ dist, dur, price, low, high });
       setLoading(false);
-    }, delay);
+    }, 1200 + Math.random() * 600);
   };
 
   const handleConfirm = () => {
@@ -159,21 +296,17 @@ const QuotePage = ({ setPage }) => {
     setTimeout(() => {
       setConfirmed(false);
       setResult(null);
-      setOrigin("");
-      setDest("");
-      setWeight("");
-      setPallet("");
-      setCargoType("");
-      setLoadDate("");
+      setOriginCity(""); setOriginDistrict("");
+      setDestCity(""); setDestDistrict("");
+      setContactName(""); setContactPhone("");
+      setWeight(""); setPallet(""); setCargoType(""); setLoadDate("");
       setVehicle("Kamyonet");
     }, 3500);
   };
 
-  const handleNewQuote = () => {
-    setResult(null);
-    setErrors({});
-  };
+  const handleNewQuote = () => { setResult(null); setErrors({}); };
 
+  /* ── Başarı ekranı ── */
   if (confirmed) {
     return (
       <div className="qp-wrap">
@@ -186,13 +319,16 @@ const QuotePage = ({ setPage }) => {
               </svg>
             </div>
             <h2 className="qp-success-title">Talebiniz Alındı!</h2>
-            <p className="qp-success-sub">Uzman ekibimiz en kısa sürede sizinle iletişime geçecek.</p>
+            <p className="qp-success-sub">
+              Uzman ekibimiz en kısa sürede <strong>{contactName}</strong> ile iletişime geçecek.
+            </p>
           </div>
         </div>
       </div>
     );
   }
 
+  /* ── Sonuç kartı ── */
   if (result) {
     return (
       <div className="qp-wrap">
@@ -201,13 +337,13 @@ const QuotePage = ({ setPage }) => {
           <div className="qp-result-card">
             <div className="qp-result-header">
               <div className="qp-result-route">
-                <span className="qp-result-city">{origin}</span>
+                <span className="qp-result-city">{originLabel}</span>
                 <span className="qp-result-arrow">
                   <svg width="18" height="10" viewBox="0 0 18 10" fill="none">
                     <path d="M1 5h16M13 1l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
-                <span className="qp-result-city">{dest}</span>
+                <span className="qp-result-city">{destLabel}</span>
               </div>
               <div className="qp-result-tags">
                 <span className="qp-result-tag">{vehicle}</span>
@@ -219,9 +355,7 @@ const QuotePage = ({ setPage }) => {
             <div className="qp-result-price-block">
               <div className="qp-result-price-lbl">Tahmini Fiyat</div>
               <div className="qp-result-price">₺ {fmt(result.price)}</div>
-              <div className="qp-result-range">
-                ₺ {fmt(result.low)} – ₺ {fmt(result.high)} aralığında
-              </div>
+              <div className="qp-result-range">₺ {fmt(result.low)} – ₺ {fmt(result.high)} aralığında</div>
             </div>
 
             <div className="qp-result-stats">
@@ -241,6 +375,23 @@ const QuotePage = ({ setPage }) => {
               </div>
             </div>
 
+            {/* İletişim özeti */}
+            <div className="qp-result-contact">
+              <div className="qp-result-contact-row">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <circle cx="7" cy="4.5" r="2.5" stroke="currentColor" strokeWidth="1.2" />
+                  <path d="M1.5 12.5c0-2.485 2.462-4.5 5.5-4.5s5.5 2.015 5.5 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                </svg>
+                <span>{contactName}</span>
+              </div>
+              <div className="qp-result-contact-row">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M2 2.5A1.5 1.5 0 013.5 1h1a1.5 1.5 0 011.5 1.5v1A1.5 1.5 0 014.5 5H4a8 8 0 005 5v-.5A1.5 1.5 0 0110.5 8h1A1.5 1.5 0 0113 9.5v1A1.5 1.5 0 0111.5 12C6.253 12 2 7.747 2 2.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" />
+                </svg>
+                <span>{contactPhone}</span>
+              </div>
+            </div>
+
             <div className="qp-result-notice">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <circle cx="7" cy="7" r="6" stroke="#9e9a92" strokeWidth="1.2" />
@@ -250,12 +401,8 @@ const QuotePage = ({ setPage }) => {
             </div>
 
             <div className="qp-result-actions">
-              <button className="qp-cta-primary" onClick={handleConfirm}>
-                Teklifi Onayla
-              </button>
-              <button className="qp-cta-secondary" onClick={handleNewQuote}>
-                Yeni Teklif Al
-              </button>
+              <button className="qp-cta-primary" onClick={handleConfirm}>Teklifi Onayla</button>
+              <button className="qp-cta-secondary" onClick={handleNewQuote}>Yeni Teklif Al</button>
             </div>
           </div>
         </div>
@@ -263,6 +410,7 @@ const QuotePage = ({ setPage }) => {
     );
   }
 
+  /* ── Form ── */
   return (
     <div className="qp-wrap">
       <Navigation currentPage="quote" setPage={setPage} />
@@ -270,62 +418,103 @@ const QuotePage = ({ setPage }) => {
       <div className="qp-inner">
         <div className="qp-header">
           <h1 className="qp-title">Teklif Al</h1>
-          <p className="qp-sub">Birkaç bilgi girin, anında fiyat öğrenin.</p>
+          <p className="qp-sub">Güzergah ve yük bilgilerini girin, anında fiyat öğrenin.</p>
         </div>
 
         <form className="qp-form-card" onSubmit={handleSubmit} noValidate>
-          {/* LOKASYON */}
+
+          {/* ── LOKASYON ── */}
           <div className="qp-section">
             <div className="qp-section-lbl">Lokasyon</div>
-            <div className="qp-loc-row">
-              <div className={`qp-field${errors.origin ? " qp-field-err" : ""}`}>
-                <label htmlFor="qp-origin">Çıkış Noktası</label>
-                <input
-                  id="qp-origin"
-                  type="text"
-                  autoComplete="off"
-                  placeholder="İstanbul"
-                  value={origin}
-                  onChange={(e) => { setOrigin(e.target.value); setErrors((p) => ({ ...p, origin: undefined })); }}
-                />
-                {errors.origin && <span className="qp-err-msg">{errors.origin}</span>}
+            <div className="qp-loc-panels">
+
+              {/* Yükleme */}
+              <div className={`qp-loc-panel${(errors.originCity || errors.originDistrict) ? " qp-loc-panel-err" : ""}`}>
+                <div className="qp-loc-panel-title">
+                  <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                    <circle cx="6.5" cy="5.5" r="2" stroke="currentColor" strokeWidth="1.3" />
+                    <path d="M6.5 1C4.015 1 2 3.015 2 5.5c0 3.375 4.5 6.5 4.5 6.5s4.5-3.125 4.5-6.5C11 3.015 8.985 1 6.5 1z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+                  </svg>
+                  Yük Alınacak Yer
+                </div>
+
+                <div className={`qp-field${errors.originCity ? " qp-field-err" : ""}`}>
+                  <label htmlFor="qp-origin-city">İl</label>
+                  <ComboBox
+                    options={STATE_NAMES}
+                    value={originCity}
+                    onChange={(v) => { setOriginCity(v); setOriginDistrict(""); clearErr("originCity"); }}
+                    placeholder="İl seçin"
+                    hasError={!!errors.originCity}
+                  />
+                  {errors.originCity && <span className="qp-err-msg">{errors.originCity}</span>}
+                </div>
+
+                <div className="qp-field">
+                  <label>İlçe <span className="qp-lbl-opt">(opsiyonel)</span></label>
+                  <ComboBox
+                    options={originDistricts}
+                    value={originDistrict}
+                    onChange={setOriginDistrict}
+                    placeholder={originCity ? "İlçe seçin" : "Önce il seçin"}
+                    disabled={!originCity}
+                  />
+                </div>
               </div>
-              <div className="qp-loc-arrow">
-                <svg width="16" height="10" viewBox="0 0 16 10" fill="none">
-                  <path d="M1 5h14M11 1l4 4-4 4" stroke="#9e9a92" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+
+              {/* Ayırıcı ok */}
+              <div className="qp-loc-divider" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
-              <div className={`qp-field${errors.dest ? " qp-field-err" : ""}`}>
-                <label htmlFor="qp-dest">Varış Noktası</label>
-                <input
-                  id="qp-dest"
-                  type="text"
-                  autoComplete="off"
-                  placeholder="Ankara"
-                  value={dest}
-                  onChange={(e) => { setDest(e.target.value); setErrors((p) => ({ ...p, dest: undefined })); }}
-                />
-                {errors.dest && <span className="qp-err-msg">{errors.dest}</span>}
+
+              {/* Teslimat */}
+              <div className={`qp-loc-panel${(errors.destCity || errors.destDistrict) ? " qp-loc-panel-err" : ""}`}>
+                <div className="qp-loc-panel-title">
+                  <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                    <path d="M6.5 11.5L2 6.5h9L6.5 11.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+                    <path d="M6.5 1.5v5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                  </svg>
+                  Yük Bırakılacak Yer
+                </div>
+
+                <div className={`qp-field${errors.destCity ? " qp-field-err" : ""}`}>
+                  <label htmlFor="qp-dest-city">İl</label>
+                  <ComboBox
+                    options={STATE_NAMES}
+                    value={destCity}
+                    onChange={(v) => { setDestCity(v); setDestDistrict(""); clearErr("destCity"); }}
+                    placeholder="İl seçin"
+                    hasError={!!errors.destCity}
+                  />
+                  {errors.destCity && <span className="qp-err-msg">{errors.destCity}</span>}
+                </div>
+
+                <div className="qp-field">
+                  <label>İlçe <span className="qp-lbl-opt">(opsiyonel)</span></label>
+                  <ComboBox
+                    options={destDistricts}
+                    value={destDistrict}
+                    onChange={setDestDistrict}
+                    placeholder={destCity ? "İlçe seçin" : "Önce il seçin"}
+                    disabled={!destCity}
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* YÜK BİLGİSİ */}
+          {/* ── YÜK BİLGİSİ ── */}
           <div className="qp-section">
             <div className="qp-section-lbl">Yük Bilgisi</div>
 
             <div className="qp-field" style={{ marginBottom: 14 }}>
               <label htmlFor="qp-cargo">Yük Tipi</label>
               <div className="qp-select-wrap">
-                <select
-                  id="qp-cargo"
-                  value={cargoType}
-                  onChange={(e) => setCargoType(e.target.value)}
-                >
+                <select id="qp-cargo" value={cargoType} onChange={(e) => setCargoType(e.target.value)}>
                   <option value="">Seçiniz</option>
-                  {CARGO_TYPES.map((t) => (
-                    <option key={t}>{t}</option>
-                  ))}
+                  {CARGO_TYPES.map((t) => <option key={t}>{t}</option>)}
                 </select>
                 <span className="qp-select-arrow">
                   <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
@@ -345,27 +534,18 @@ const QuotePage = ({ setPage }) => {
                   step="0.5"
                   min="0"
                   value={weight}
-                  onChange={(e) => { setWeight(e.target.value); setErrors((p) => ({ ...p, weight: undefined })); }}
+                  onChange={(e) => { setWeight(e.target.value); clearErr("weight"); }}
                 />
                 {errors.weight && <span className="qp-err-msg">{errors.weight}</span>}
               </div>
               <div className="qp-field">
-                <label htmlFor="qp-pallet">
-                  Palet / Adet{" "}
-                  <span className="qp-lbl-opt">(opsiyonel)</span>
-                </label>
-                <input
-                  id="qp-pallet"
-                  type="number"
-                  placeholder="Örn: 12"
-                  value={pallet}
-                  onChange={(e) => setPallet(e.target.value)}
-                />
+                <label htmlFor="qp-pallet">Palet / Adet <span className="qp-lbl-opt">(opsiyonel)</span></label>
+                <input id="qp-pallet" type="number" placeholder="Örn: 12" value={pallet} onChange={(e) => setPallet(e.target.value)} />
               </div>
             </div>
           </div>
 
-          {/* ARAÇ TİPİ */}
+          {/* ── ARAÇ TİPİ ── */}
           <div className="qp-section">
             <div className="qp-section-lbl">Araç Tipi</div>
             <div className="qp-vehicles">
@@ -387,18 +567,45 @@ const QuotePage = ({ setPage }) => {
             </div>
           </div>
 
-          {/* TARİH */}
+          {/* ── TARİH ── */}
           <div className="qp-section">
             <div className="qp-section-lbl">Tarih</div>
             <div className="qp-field">
               <label htmlFor="qp-date">Yükleme Tarihi <span className="qp-lbl-opt">(opsiyonel)</span></label>
               <div className="qp-date-wrap">
+                <input id="qp-date" type="date" value={loadDate} onChange={(e) => setLoadDate(e.target.value)} />
+              </div>
+            </div>
+          </div>
+
+          {/* ── İLETİŞİM ── */}
+          <div className="qp-section">
+            <div className="qp-section-lbl">İletişim</div>
+            <div className="qp-contact-row">
+              <div className={`qp-field${errors.contactName ? " qp-field-err" : ""}`}>
+                <label htmlFor="qp-contact-name">Yetkili Kişi</label>
                 <input
-                  id="qp-date"
-                  type="date"
-                  value={loadDate}
-                  onChange={(e) => setLoadDate(e.target.value)}
+                  id="qp-contact-name"
+                  type="text"
+                  placeholder="Ad Soyad"
+                  autoComplete="name"
+                  value={contactName}
+                  onChange={(e) => { setContactName(e.target.value); clearErr("contactName"); }}
                 />
+                {errors.contactName && <span className="qp-err-msg">{errors.contactName}</span>}
+              </div>
+
+              <div className={`qp-field${errors.contactPhone ? " qp-field-err" : ""}`}>
+                <label htmlFor="qp-contact-phone">Telefon Numarası</label>
+                <input
+                  id="qp-contact-phone"
+                  type="tel"
+                  placeholder="0 5xx xxx xx xx"
+                  autoComplete="tel"
+                  value={contactPhone}
+                  onChange={(e) => { setContactPhone(e.target.value); clearErr("contactPhone"); }}
+                />
+                {errors.contactPhone && <span className="qp-err-msg">{errors.contactPhone}</span>}
               </div>
             </div>
           </div>
