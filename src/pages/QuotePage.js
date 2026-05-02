@@ -183,9 +183,6 @@ const ComboBox = ({ options, value, onChange, placeholder, disabled, hasError })
         value={query}
         disabled={disabled}
         autoComplete="off"
-        aria-autocomplete="list"
-        aria-expanded={open}
-        role="combobox"
         onChange={(e) => {
           setQuery(e.target.value);
           setOpen(true);
