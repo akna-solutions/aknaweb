@@ -152,7 +152,7 @@ const ComboBox = ({ options, value, onChange, placeholder, disabled, hasError })
     setQuery(value || "");
   }, [value]);
 
-  /* Dışarı tıklanınca kapat ve geçersiz girişi geri al */
+  /* Dışarı tıklanınca/dokunulunca kapat ve geçersiz girişi geri al */
   useEffect(() => {
     const onOutside = (e) => {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
@@ -161,7 +161,11 @@ const ComboBox = ({ options, value, onChange, placeholder, disabled, hasError })
       }
     };
     document.addEventListener("mousedown", onOutside);
-    return () => document.removeEventListener("mousedown", onOutside);
+    document.addEventListener("touchstart", onOutside, { passive: true });
+    return () => {
+      document.removeEventListener("mousedown", onOutside);
+      document.removeEventListener("touchstart", onOutside);
+    };
   }, [query, value, options]);
 
   const filtered = query
@@ -226,7 +230,8 @@ const ComboBox = ({ options, value, onChange, placeholder, disabled, hasError })
                   className={`qp-combo-item${opt === value ? " selected" : ""}`}
                   role="option"
                   aria-selected={opt === value}
-                  onPointerDown={(e) => { e.preventDefault(); select(opt); }}
+                  onPointerDown={(e) => { if (e.pointerType === "mouse") e.preventDefault(); }}
+                  onClick={() => select(opt)}
                 >
                   {opt}
                 </li>
