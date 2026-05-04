@@ -47,9 +47,9 @@ function App() {
   const navigateTo = useCallback((page) => {
     setCurrentPage(page);
     if (page === "home") {
-      history.replaceState(null, "", window.location.pathname + window.location.search);
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
     } else if (page !== "load-tracking") {
-      history.replaceState(null, "", "#" + page);
+      window.history.replaceState(null, "", "#" + page);
     }
   }, []);
 
