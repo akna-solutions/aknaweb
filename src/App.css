@@ -2474,6 +2474,16 @@ body {
   }
 }
 
+/* iOS zoom önleme: font-size < 16px olan inputlar dokunuşta zoom yapar */
+@media (max-width: 768px) {
+  .qp-combo-input,
+  .qp-field input,
+  .qp-field .qp-select-wrap select,
+  .qp-field .qp-date-wrap input {
+    font-size: 16px;
+  }
+}
+
 @media (max-width: 540px) {
   .qp-form-card {
     padding: 22px 18px 20px;
