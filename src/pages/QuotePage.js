@@ -86,20 +86,33 @@ const CARGO_TYPES = [
   "İnşaat Malzemesi",
 ];
 
+/* ── Turkish character normalization for search ── */
+function trNorm(str) {
+  return str
+    .replace(/[İIı]/g, "i")
+    .replace(/[Şş]/g, "s")
+    .replace(/[Ğğ]/g, "g")
+    .replace(/[Üü]/g, "u")
+    .replace(/[Öö]/g, "o")
+    .replace(/[Çç]/g, "c")
+    .toLowerCase();
+}
+
 /* ── Geography helpers (country-state-city) ── */
 const TR_STATES = State.getStatesOfCountry("TR");
-const STATE_NAMES = TR_STATES.map((s) => s.name);
+const CITY_NAME_FIXES = { Istanbul: "İstanbul" };
+const STATE_NAMES = TR_STATES.map((s) => CITY_NAME_FIXES[s.name] || s.name);
 
 function getDistricts(cityName) {
-  const state = TR_STATES.find((s) => s.name === cityName);
+  const state = TR_STATES.find((s) => (CITY_NAME_FIXES[s.name] || s.name) === cityName);
   if (!state) return [];
   return City.getCitiesOfState("TR", state.isoCode).map((c) => c.name);
 }
 
 /* ── Calc helpers ── */
 function getDistance(a, b) {
-  const k1 = `${a.toLowerCase().trim()}-${b.toLowerCase().trim()}`;
-  const k2 = `${b.toLowerCase().trim()}-${a.toLowerCase().trim()}`;
+  const k1 = `${trNorm(a).trim()}-${trNorm(b).trim()}`;
+  const k2 = `${trNorm(b).trim()}-${trNorm(a).trim()}`;
   return CITY_DIST[k1] || CITY_DIST[k2] || Math.floor(Math.random() * 600 + 150);
 }
 
@@ -152,7 +165,7 @@ const ComboBox = ({ options, value, onChange, placeholder, disabled, hasError })
   }, [query, value, options]);
 
   const filtered = query
-    ? options.filter((o) => o.toLowerCase().includes(query.toLowerCase()))
+    ? options.filter((o) => trNorm(o).includes(trNorm(query)))
     : options;
 
   const LIMIT = 10;
