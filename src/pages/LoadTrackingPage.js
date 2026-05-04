@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 // ─────────────────────────────────────────
 // CONFIG
 // ─────────────────────────────────────────
-const API_BASE = "http://192.168.0.194:5001";
+const API_BASE = "https://aknatransportloadapi.onrender.com";
 
 // ─────────────────────────────────────────
 // HELPERS
