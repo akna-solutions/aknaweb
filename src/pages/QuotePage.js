@@ -139,6 +139,16 @@ function fmt(n) {
   return new Intl.NumberFormat("tr-TR").format(n);
 }
 
+/* Turkish phone formatting: 0(5xx)xxx xxxx */
+function formatPhoneNumber(value) {
+  const digits = value.replace(/\D/g, "");
+  if (!digits) return "";
+  if (digits.length <= 1) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 1)}(${digits.slice(1)}`;
+  if (digits.length <= 7) return `${digits.slice(0, 1)}(${digits.slice(1, 4)})${digits.slice(4)}`;
+  return `${digits.slice(0, 1)}(${digits.slice(1, 4)})${digits.slice(4, 7)} ${digits.slice(7, 11)}`;
+}
+
 /* ══════════════════════════════════════════
    COMBOBOX — arama destekli açılır liste
 ══════════════════════════════════════════ */
@@ -269,6 +279,7 @@ const QuotePage = ({ setPage }) => {
 
   const originCityRef = useRef(null);
   const destCityRef = useRef(null);
+  const cargoTypeRef = useRef(null);
   const weightRef = useRef(null);
   const contactNameRef = useRef(null);
   const contactPhoneRef = useRef(null);
@@ -285,6 +296,9 @@ const QuotePage = ({ setPage }) => {
     const e = {};
     if (!originCity) e.originCity = "Yükleme ili seçiniz";
     if (!destCity) e.destCity = "Teslimat ili seçiniz";
+    if (originDistrict && destDistrict && originDistrict === destDistrict) {
+      e.districtSame = "Yük alınan ve bırakılan yer ilçeleri farklı olmalı";
+    }
     if (!weight || parseFloat(weight) <= 0) e.weight = "Ağırlık gerekli";
     if (!contactName.trim()) e.contactName = "Ad Soyad gerekli";
     if (!contactPhone.trim()) {
@@ -533,25 +547,25 @@ const QuotePage = ({ setPage }) => {
                 </div>
               </div>
             </div>
+            {errors.districtSame && (
+              <span className="qp-err-msg" style={{ display: "block", marginTop: 8 }}>
+                {errors.districtSame}
+              </span>
+            )}
           </div>
 
           {/* ── YÜK BİLGİSİ ── */}
           <div className="qp-section">
             <div className="qp-section-lbl">Yük Bilgisi</div>
 
-            <div className="qp-field" style={{ marginBottom: 14 }}>
-              <label htmlFor="qp-cargo">Yük Tipi</label>
-              <div className="qp-select-wrap">
-                <select id="qp-cargo" value={cargoType} onChange={(e) => setCargoType(e.target.value)}>
-                  <option value="">Seçiniz</option>
-                  {CARGO_TYPES.map((t) => <option key={t}>{t}</option>)}
-                </select>
-                <span className="qp-select-arrow">
-                  <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
-                    <path d="M1 1l5 5 5-5" stroke="#9e9a92" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </span>
-              </div>
+            <div ref={cargoTypeRef} className="qp-field" style={{ marginBottom: 14 }}>
+              <label htmlFor="qp-cargo">Yük Tipi <span className="qp-lbl-opt">(opsiyonel)</span></label>
+              <ComboBox
+                options={CARGO_TYPES}
+                value={cargoType}
+                onChange={setCargoType}
+                placeholder="Yük tipi seçin"
+              />
             </div>
 
             <div className="qp-input-row">
@@ -632,10 +646,14 @@ const QuotePage = ({ setPage }) => {
                   id="qp-contact-phone"
                   type="tel"
                   inputMode="numeric"
-                  placeholder="0 5xx xxx xx xx"
+                  placeholder="0(5xx)xxx xxxx"
                   autoComplete="tel"
                   value={contactPhone}
-                  onChange={(e) => { setContactPhone(e.target.value); clearErr("contactPhone"); }}
+                  onChange={(e) => {
+                    const formatted = formatPhoneNumber(e.target.value);
+                    setContactPhone(formatted);
+                    clearErr("contactPhone");
+                  }}
                 />
                 {errors.contactPhone && <span className="qp-err-msg">{errors.contactPhone}</span>}
               </div>

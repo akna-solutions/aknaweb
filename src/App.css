@@ -2039,7 +2039,7 @@ body {
   width: 100%;
   height: 46px;
   padding: 0 14px;
-  background: var(--bg-alt);
+  background: var(--surface);
   border: 1.5px solid var(--border);
   border-radius: var(--r-sm);
   font-size: 14px;
