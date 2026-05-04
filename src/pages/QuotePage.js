@@ -267,6 +267,12 @@ const QuotePage = ({ setPage }) => {
   const [confirmed, setConfirmed] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const originCityRef = useRef(null);
+  const destCityRef = useRef(null);
+  const weightRef = useRef(null);
+  const contactNameRef = useRef(null);
+  const contactPhoneRef = useRef(null);
+
   const originDistricts = getDistricts(originCity);
   const destDistricts = getDistricts(destCity);
 
@@ -292,7 +298,16 @@ const QuotePage = ({ setPage }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const errs = validate();
-    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      const ORDER = ["originCity", "destCity", "weight", "contactName", "contactPhone"];
+      const REFS = { originCity: originCityRef, destCity: destCityRef, weight: weightRef, contactName: contactNameRef, contactPhone: contactPhoneRef };
+      const firstErr = ORDER.find((k) => errs[k]);
+      if (firstErr && REFS[firstErr].current) {
+        REFS[firstErr].current.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return;
+    }
     setErrors({});
     setLoading(true);
     setResult(null);
@@ -453,7 +468,7 @@ const QuotePage = ({ setPage }) => {
                   Yük Alınacak Yer
                 </div>
 
-                <div className={`qp-field${errors.originCity ? " qp-field-err" : ""}`}>
+                <div ref={originCityRef} className={`qp-field${errors.originCity ? " qp-field-err" : ""}`}>
                   <label htmlFor="qp-origin-city">İl</label>
                   <ComboBox
                     options={STATE_NAMES}
@@ -494,7 +509,7 @@ const QuotePage = ({ setPage }) => {
                   Yük Bırakılacak Yer
                 </div>
 
-                <div className={`qp-field${errors.destCity ? " qp-field-err" : ""}`}>
+                <div ref={destCityRef} className={`qp-field${errors.destCity ? " qp-field-err" : ""}`}>
                   <label htmlFor="qp-dest-city">İl</label>
                   <ComboBox
                     options={STATE_NAMES}
@@ -540,11 +555,12 @@ const QuotePage = ({ setPage }) => {
             </div>
 
             <div className="qp-input-row">
-              <div className={`qp-field${errors.weight ? " qp-field-err" : ""}`}>
+              <div ref={weightRef} className={`qp-field${errors.weight ? " qp-field-err" : ""}`}>
                 <label htmlFor="qp-weight">Ağırlık (ton)</label>
                 <input
                   id="qp-weight"
                   type="number"
+                  inputMode="decimal"
                   placeholder="0.0"
                   step="0.5"
                   min="0"
@@ -555,7 +571,7 @@ const QuotePage = ({ setPage }) => {
               </div>
               <div className="qp-field">
                 <label htmlFor="qp-pallet">Palet / Adet <span className="qp-lbl-opt">(opsiyonel)</span></label>
-                <input id="qp-pallet" type="number" placeholder="Örn: 12" value={pallet} onChange={(e) => setPallet(e.target.value)} />
+                <input id="qp-pallet" type="number" inputMode="numeric" placeholder="Örn: 12" value={pallet} onChange={(e) => setPallet(e.target.value)} />
               </div>
             </div>
           </div>
@@ -597,7 +613,7 @@ const QuotePage = ({ setPage }) => {
           <div className="qp-section">
             <div className="qp-section-lbl">İletişim</div>
             <div className="qp-contact-row">
-              <div className={`qp-field${errors.contactName ? " qp-field-err" : ""}`}>
+              <div ref={contactNameRef} className={`qp-field${errors.contactName ? " qp-field-err" : ""}`}>
                 <label htmlFor="qp-contact-name">Yetkili Kişi</label>
                 <input
                   id="qp-contact-name"
@@ -610,11 +626,12 @@ const QuotePage = ({ setPage }) => {
                 {errors.contactName && <span className="qp-err-msg">{errors.contactName}</span>}
               </div>
 
-              <div className={`qp-field${errors.contactPhone ? " qp-field-err" : ""}`}>
+              <div ref={contactPhoneRef} className={`qp-field${errors.contactPhone ? " qp-field-err" : ""}`}>
                 <label htmlFor="qp-contact-phone">Telefon Numarası</label>
                 <input
                   id="qp-contact-phone"
                   type="tel"
+                  inputMode="numeric"
                   placeholder="0 5xx xxx xx xx"
                   autoComplete="tel"
                   value={contactPhone}
