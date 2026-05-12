@@ -1,5 +1,89 @@
 import React, { useState } from "react";
 import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
+
+const LocationIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+    <circle cx="12" cy="9" r="2.5" />
+  </svg>
+);
+
+const PhoneIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.53 10.78 19.79 19.79 0 01.46 2.18 2 2 0 012.44.01h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l.77-.78a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
+  </svg>
+);
+
+const MailIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="4" width="20" height="16" rx="2" />
+    <path d="M2 7l10 7 10-7" />
+  </svg>
+);
+
+const ClockIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 6v6l4 2" />
+  </svg>
+);
+
+const BriefcaseIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="7" width="20" height="14" rx="2" />
+    <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
+    <path d="M12 12v2M8 12v2M16 12v2" />
+  </svg>
+);
+
+const HeadsetIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 18v-6a9 9 0 0118 0v6" />
+    <path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3v5zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3v5z" />
+  </svg>
+);
+
+const FileTextIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+  </svg>
+);
+
+const BookIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+  </svg>
+);
+
+const departments = [
+  {
+    Icon: BriefcaseIcon,
+    title: "Satış",
+    desc: "Yeni müşteri başvuruları ve teklif süreçleri",
+    email: "satis@aknalojistik.com",
+  },
+  {
+    Icon: HeadsetIcon,
+    title: "Teknik Destek",
+    desc: "7/24 teknik yardım ve sistem sorunları",
+    email: "destek@aknalojistik.com",
+  },
+  {
+    Icon: FileTextIcon,
+    title: "Muhasebe",
+    desc: "Fatura ve ödeme işlemleri",
+    email: "muhasebe@aknalojistik.com",
+  },
+  {
+    Icon: BookIcon,
+    title: "Eğitim",
+    desc: "Kullanıcı eğitimleri ve dokümantasyon",
+    email: "egitim@aknalojistik.com",
+  },
+];
 
 const ContactPage = ({ setPage }) => {
   const [formData, setFormData] = useState({
@@ -13,10 +97,7 @@ const ContactPage = ({ setPage }) => {
   const [submitted, setSubmitted] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
@@ -24,13 +105,7 @@ const ContactPage = ({ setPage }) => {
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "general",
-        message: "",
-      });
+      setFormData({ name: "", email: "", phone: "", subject: "general", message: "" });
     }, 3000);
   };
 
@@ -52,7 +127,7 @@ const ContactPage = ({ setPage }) => {
               <h2>Bize Ulaşın</h2>
 
               <div className="contact-item">
-                <div className="contact-icon">📍</div>
+                <div className="contact-icon"><LocationIcon /></div>
                 <div>
                   <h3>Adres</h3>
                   <p>Merkez Mah. Lojistik Cad. No:123</p>
@@ -61,7 +136,7 @@ const ContactPage = ({ setPage }) => {
               </div>
 
               <div className="contact-item">
-                <div className="contact-icon">📞</div>
+                <div className="contact-icon"><PhoneIcon /></div>
                 <div>
                   <h3>Telefon</h3>
                   <p>+90 212 XXX XX XX</p>
@@ -70,7 +145,7 @@ const ContactPage = ({ setPage }) => {
               </div>
 
               <div className="contact-item">
-                <div className="contact-icon">📧</div>
+                <div className="contact-icon"><MailIcon /></div>
                 <div>
                   <h3>E-posta</h3>
                   <p>info@aknalojistik.com</p>
@@ -79,22 +154,12 @@ const ContactPage = ({ setPage }) => {
               </div>
 
               <div className="contact-item">
-                <div className="contact-icon">🕐</div>
+                <div className="contact-icon"><ClockIcon /></div>
                 <div>
                   <h3>Çalışma Saatleri</h3>
-                  <p>Pazartesi - Cuma: 08:00 - 18:00</p>
-                  <p>Cumartesi: 09:00 - 14:00</p>
+                  <p>Pazartesi – Cuma: 08:00 – 18:00</p>
+                  <p>Cumartesi: 09:00 – 14:00</p>
                   <p>Teknik Destek: 7/24</p>
-                </div>
-              </div>
-
-              <div className="social-media">
-                <h3>Sosyal Medya</h3>
-                <div className="social-icons">
-                  <button className="social-btn">📘 Facebook</button>
-                  <button className="social-btn">🐦 Twitter</button>
-                  <button className="social-btn">📷 Instagram</button>
-                  <button className="social-btn">💼 LinkedIn</button>
                 </div>
               </div>
             </div>
@@ -102,8 +167,12 @@ const ContactPage = ({ setPage }) => {
             <div className="contact-form-container">
               {submitted ? (
                 <div className="success-message">
-                  <div className="success-icon">✓</div>
-                  <h3>Mesajınız Gönderildi!</h3>
+                  <div className="success-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </div>
+                  <h3>Mesajınız Gönderildi</h3>
                   <p>En kısa sürede size geri dönüş yapacağız.</p>
                   <p>İlginiz için teşekkür ederiz.</p>
                 </div>
@@ -135,7 +204,6 @@ const ContactPage = ({ setPage }) => {
                         placeholder="ornek@email.com"
                       />
                     </div>
-
                     <div className="form-group">
                       <label>Telefon</label>
                       <input
@@ -189,120 +257,30 @@ const ContactPage = ({ setPage }) => {
 
       <section className="departments">
         <div className="container">
-          <h2>Departmanlarımız</h2>
+          <div className="tm-ref-badge" style={{ marginBottom: 12 }}>
+            <span className="tm-ref-badge__dot"></span>
+            <span className="tm-ref-badge__txt">Departmanlar</span>
+          </div>
+          <h2 style={{ fontSize: "clamp(22px, 2.8vw, 36px)", fontWeight: 700, letterSpacing: "-0.03em", marginBottom: 0 }}>
+            Doğru ekiple<br /><em style={{ fontStyle: "normal", color: "var(--accent-hover)" }}>doğrudan iletişim.</em>
+          </h2>
 
-          <div className="departments-grid">
-            <div className="department-card">
-              <div className="dept-icon">💼</div>
-              <h3>Satış Departmanı</h3>
-              <p>Yeni müşteri başvuruları ve teklif süreçleri için</p>
-              <a href="mailto:satis@aknalojistik.com">satis@aknalojistik.com</a>
-            </div>
-
-            <div className="department-card">
-              <div className="dept-icon">🛠️</div>
-              <h3>Teknik Destek</h3>
-              <p>7/24 teknik yardım ve sistem sorunları için</p>
-              <a href="mailto:destek@aknalojistik.com">
-                destek@aknalojistik.com
-              </a>
-            </div>
-
-            <div className="department-card">
-              <div className="dept-icon">📋</div>
-              <h3>Muhasebe</h3>
-              <p>Fatura ve ödeme işlemleri için</p>
-              <a href="mailto:muhasebe@aknalojistik.com">
-                muhasebe@aknalojistik.com
-              </a>
-            </div>
-
-            <div className="department-card">
-              <div className="dept-icon">🎓</div>
-              <h3>Eğitim</h3>
-              <p>Kullanıcı eğitimleri ve dokümanlar için</p>
-              <a href="mailto:egitim@aknalojistik.com">
-                egitim@aknalojistik.com
-              </a>
-            </div>
+          <div className="departments-grid" style={{ marginTop: 40 }}>
+            {departments.map(({ Icon, title, desc, email }) => (
+              <div className="department-card" key={title}>
+                <div className="dept-icon-wrap">
+                  <Icon />
+                </div>
+                <h3>{title}</h3>
+                <p>{desc}</p>
+                <a href={`mailto:${email}`}>{email}</a>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="faq-section">
-        <div className="container">
-          <h2>Sıkça Sorulan Sorular</h2>
-
-          <div className="faq-grid">
-            <div className="faq-item">
-              <h4>❓ Sistem nasıl çalışır?</h4>
-              <p>
-                Araçlarınıza GPS cihazları takılır ve bulut tabanlı sistemimiz
-                üzerinden tüm bilgilere erişirsiniz. Kurulum 1-2 gün sürer.
-              </p>
-            </div>
-
-            <div className="faq-item">
-              <h4>💰 Fiyatlandırma nasıl?</h4>
-              <p>
-                Araç sayınıza ve seçtiğiniz pakete göre aylık abonelik sistemi.
-                İlk 3 ay ücretsiz deneme imkanı.
-              </p>
-            </div>
-
-            <div className="faq-item">
-              <h4>📱 Mobil uygulama var mı?</h4>
-              <p>
-                Evet, hem iOS hem de Android için ücretsiz mobil uygulamamız
-                mevcut.
-              </p>
-            </div>
-
-            <div className="faq-item">
-              <h4>🔧 Kurulum süresi ne kadar?</h4>
-              <p>
-                Ortalama 1-2 gün içinde tüm araçlarınız sisteme dahil edilir ve
-                eğitimler tamamlanır.
-              </p>
-            </div>
-
-            <div className="faq-item">
-              <h4>📞 Destek nasıl alırım?</h4>
-              <p>
-                7/24 telefon, email ve canlı chat desteği sunuyoruz. Acil
-                durumlar için özel hat mevcuttur.
-              </p>
-            </div>
-
-            <div className="faq-item">
-              <h4>🔒 Verilerim güvende mi?</h4>
-              <p>
-                Tüm verileriniz şifreli olarak saklanır ve ISO 27001 sertifikalı
-                sistemlerimizde korunur.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="map-section">
-        <div className="container">
-          <h2>Ofis Konumumuz</h2>
-          <div className="map-placeholder">
-            <div className="map-icon">🗺️</div>
-            <p>Kadıköy, İstanbul</p>
-            <small>Gerçek uygulamada buraya Google Maps entegre edilir</small>
-          </div>
-        </div>
-      </section>
-
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-bottom">
-            <p>&copy; 2024 Akna Lojistik. Tüm hakları saklıdır.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer setPage={setPage} />
     </div>
   );
 };
