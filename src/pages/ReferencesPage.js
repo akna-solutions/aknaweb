@@ -1,124 +1,132 @@
 import React from "react";
 import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
+
+const references = [
+  {
+    company: "Metro Nakliyat",
+    initial: "M",
+    sector: "Nakliyat",
+    vehicles: "120+ araç",
+    testimonial:
+      "Akna ile çalışmaya başladığımızdan beri operasyonel süreçlerimiz belirgin biçimde hızlandı. Gerçek zamanlı takip sistemi müşterilerimize çok daha net bir görünürlük sunuyor.",
+    person: "Ahmet Yılmaz",
+    role: "Operasyon Müdürü",
+  },
+  {
+    company: "Hızır Kargo",
+    initial: "H",
+    sector: "Kargo & Kurye",
+    vehicles: "85 araç",
+    testimonial:
+      "Rota optimizasyonu sayesinde yakıt maliyetlerimizde ciddi tasarruf sağladık. Teslimat süreçleri artık çok daha öngörülebilir; müşteri beklentisini karşılamak kolaylaştı.",
+    person: "Zeynep Kara",
+    role: "Genel Müdür",
+  },
+  {
+    company: "Şehirlerarası Yük",
+    initial: "Ş",
+    sector: "Şehirlerarası Taşımacılık",
+    vehicles: "200+ araç",
+    testimonial:
+      "Analitik raporlama filo yönetimini merkezi hale getirdi. Sürücü performansını ve rota verimliliğini tek ekrandan takip etmek operasyon yükümüzü önemli ölçüde azalttı.",
+    person: "Mehmet Öztürk",
+    role: "Filo Yöneticisi",
+  },
+  {
+    company: "Çelik Dağıtım",
+    initial: "Ç",
+    sector: "Dağıtım & Lojistik",
+    vehicles: "60 araç",
+    testimonial:
+      "Büyüme döneminde operasyonu kontrol altında tutmak zordu. Akna'nın sistemi bu süreçte hem esneklik hem de görünürlük sağladı. Destek ekibi de her adımda yanımızdaydı.",
+    person: "Fatma Demir",
+    role: "İşletme Sahibi",
+  },
+  {
+    company: "Soğuk Zincir",
+    initial: "S",
+    sector: "Soğuk Zincir Taşımacılığı",
+    vehicles: "45 araç",
+    testimonial:
+      "Sektöre özgü gereksinimlerimize yönelik özelleştirilebilir yapısı en büyük avantajı. Sıcaklık takibi ve rota güvenliği konusunda aradığımız çözümü bulduk.",
+    person: "Can Aydın",
+    role: "Teknik Müdür",
+  },
+  {
+    company: "Express Kargo",
+    initial: "E",
+    sector: "Hızlı Teslimat",
+    vehicles: "150+ araç",
+    testimonial:
+      "Saha ekiplerimiz mobil uygulama sayesinde her yerden sisteme erişebiliyor. Teslimat süreleri kısaldı, müşteri şikayetleri azaldı; bunları sayısal olarak görmek motive edici.",
+    person: "Deniz Akar",
+    role: "IT Direktörü",
+  },
+];
+
+const stats = [
+  { value: "500+", label: "Aktif Müşteri" },
+  { value: "2.000+", label: "Takip Edilen Araç" },
+  { value: "%98", label: "Müşteri Memnuniyeti" },
+  { value: "6+", label: "Yıllık Deneyim" },
+];
 
 const ReferencesPage = ({ setPage }) => {
-  const references = [
-    {
-      company: "Metro Nakliyat A.Ş.",
-      logo: "🚚",
-      sector: "Nakliyat",
-      vehicles: "120+ Araç",
-      testimonial:
-        "Akna Lojistik ile çalışmaya başladığımızdan beri operasyonel verimliliğimiz %40 arttı. Gerçek zamanlı takip sistemi sayesinde müşterilerimize daha iyi hizmet sunuyoruz.",
-      person: "Ahmet Yılmaz - Operasyon Müdürü",
-    },
-    {
-      company: "Hızır Kargo",
-      logo: "📦",
-      sector: "Kargo & Kurye",
-      vehicles: "85 Araç",
-      testimonial:
-        "Rota optimizasyonu sayesinde yakıt maliyetlerimizde ciddi tasarruf sağladık. Müşteri memnuniyeti oranımız %95'e ulaştı. Kesinlikle tavsiye ediyoruz.",
-      person: "Zeynep Kara - Genel Müdür",
-    },
-    {
-      company: "Şehirlerarası Yük Taşıma Ltd.",
-      logo: "🛣️",
-      sector: "Şehirlerarası Taşımacılık",
-      vehicles: "200+ Araç",
-      testimonial:
-        "Özellikle analitik raporlama sistemi çok işimize yarıyor. Sürücü performanslarını anlık takip edebiliyoruz. Kazalarımızda belirgin bir azalma oldu.",
-      person: "Mehmet Öztürk - Filo Yöneticisi",
-    },
-    {
-      company: "Çelik Dağıtım",
-      logo: "🏭",
-      sector: "Dağıtım & Lojistik",
-      vehicles: "60 Araç",
-      testimonial:
-        "Küçük bir filo olarak başladık ama Akna'nın sistemleri büyüme sürecimizde çok değerli oldu. Müşteri destek ekibi her zaman yardımcı oluyor.",
-      person: "Fatma Demir - İşletme Sahibi",
-    },
-    {
-      company: "Soğuk Zincir Taşımacılık",
-      logo: "❄️",
-      sector: "Soğuk Zincir",
-      vehicles: "45 Araç",
-      testimonial:
-        "Özel ihtiyaçlarımız için özelleştirilmiş çözümler sundular. Sıcaklık takibi ve rota güvenliği konusunda harika bir sistem kurduk.",
-      person: "Can Aydın - Teknik Müdür",
-    },
-    {
-      company: "Express Kargo Hizmetleri",
-      logo: "⚡",
-      sector: "Hızlı Teslimat",
-      vehicles: "150+ Araç",
-      testimonial:
-        "Mobil uygulama sayesinde saha ekiplerimiz her yerden sisteme erişebiliyor. Teslimat sürelerimiz %30 kısaldı ve müşteri şikayetleri minimize oldu.",
-      person: "Deniz Akar - IT Direktörü",
-    },
-  ];
-
-  const stats = [
-    { value: "500+", label: "Mutlu Müşteri" },
-    { value: "2000+", label: "Takip Edilen Araç" },
-    { value: "%98", label: "Müşteri Memnuniyeti" },
-    { value: "32+", label: "Yıllık Tecrübe" },
-  ];
-
   return (
     <div className="page">
       <Navigation currentPage="references" setPage={setPage} />
 
       <section className="references-hero">
         <div className="container">
-          <h1>Referanslarımız</h1>
-          <p>Türkiye'nin önde gelen lojistik firmalarının tercihi</p>
+          <h1>Referanslar</h1>
+          <p>Türkiye genelinde lojistik firmalarının tercih ettiği platform</p>
         </div>
       </section>
 
-      <section className="stats-section">
-        <div className="container">
-          <div className="stats-row">
-            {stats.map((stat, index) => (
-              <div key={index} className="stat-box">
-                <div className="stat-number">{stat.value}</div>
-                <div className="stat-label">{stat.label}</div>
-              </div>
-            ))}
+      <section className="tm-ref-stats">
+        <div className="tm-ref-stats__inner">
+          {stats.map((s) => (
+            <div className="tm-ref-stat" key={s.label}>
+              <div className="tm-ref-stat__val">{s.value}</div>
+              <div className="tm-ref-stat__lbl">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="tm-ref-section">
+        <div className="tm-ref-section__inner">
+          <div className="tm-ref-head">
+            <div className="tm-ref-badge">
+              <span className="tm-ref-badge__dot"></span>
+              <span className="tm-ref-badge__txt">Müşteri Deneyimleri</span>
+            </div>
+            <h2 className="tm-ref-title">
+              Onlar anlatsın,
+              <br />
+              <em>siz değerlendirin.</em>
+            </h2>
           </div>
-        </div>
-      </section>
 
-      <section className="references-section">
-        <div className="container">
-          <h2>Müşterilerimizden Gelen Geri Bildirimler</h2>
-
-          <div className="references-grid">
-            {references.map((ref, index) => (
-              <div key={index} className="reference-card">
-                <div className="reference-header">
-                  <div className="company-logo">{ref.logo}</div>
-                  <div className="company-info">
-                    <h3>{ref.company}</h3>
-                    <div className="company-meta">
-                      <span className="sector">{ref.sector}</span>
-                      <span className="vehicles">🚛 {ref.vehicles}</span>
+          <div className="tm-ref-grid">
+            {references.map((ref) => (
+              <div className="tm-ref-card" key={ref.company}>
+                <div className="tm-ref-card__top">
+                  <div className="tm-ref-initial">{ref.initial}</div>
+                  <div className="tm-ref-company">
+                    <div className="tm-ref-company__name">{ref.company}</div>
+                    <div className="tm-ref-company__meta">
+                      <span>{ref.sector}</span>
+                      <span className="tm-ref-sep">·</span>
+                      <span>{ref.vehicles}</span>
                     </div>
                   </div>
                 </div>
-
-                <div className="testimonial">
-                  <div className="quote-icon">"</div>
-                  <p>{ref.testimonial}</p>
-                </div>
-
-                <div className="reference-footer">
-                  <div className="person-info">
-                    <div className="person-icon">👤</div>
-                    <div className="person-name">{ref.person}</div>
-                  </div>
-                  <div className="rating">⭐⭐⭐⭐⭐</div>
+                <p className="tm-ref-quote">{ref.testimonial}</p>
+                <div className="tm-ref-person">
+                  <span className="tm-ref-person__name">{ref.person}</span>
+                  <span className="tm-ref-person__role">{ref.role}</span>
                 </div>
               </div>
             ))}
@@ -126,76 +134,7 @@ const ReferencesPage = ({ setPage }) => {
         </div>
       </section>
 
-      <section className="sectors-section">
-        <div className="container">
-          <h2>Hizmet Verdiğimiz Sektörler</h2>
-
-          <div className="sectors-grid">
-            <div className="sector-item">
-              <div className="sector-icon">🚚</div>
-              <h3>Nakliyat</h3>
-              <p>Şehirlerarası ve şehir içi nakliyat firmaları</p>
-            </div>
-
-            <div className="sector-item">
-              <div className="sector-icon">📦</div>
-              <h3>Kargo & Kurye</h3>
-              <p>Express teslimat ve kargo hizmetleri</p>
-            </div>
-
-            <div className="sector-item">
-              <div className="sector-icon">🏭</div>
-              <h3>Üretim & Dağıtım</h3>
-              <p>Fabrika ve depo dağıtım sistemleri</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="certifications">
-        <div className="container">
-          <h2>Sertifikalarımız ve Üyeliklerimiz</h2>
-          <div className="cert-grid">
-            <div className="cert-item">
-              <div className="cert-badge">🏆</div>
-              <p>ISO 9001 Kalite Yönetimi</p>
-            </div>
-            <div className="cert-item">
-              <div className="cert-badge">🔒</div>
-              <p>ISO 27001 Bilgi Güvenliği</p>
-            </div>
-            <div className="cert-item">
-              <div className="cert-badge">🌍</div>
-              <p>ISO 14001 Çevre Yönetimi</p>
-            </div>
-            <div className="cert-item">
-              <div className="cert-badge">✓</div>
-              <p>UND Üyesi</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="cta">
-        <div className="container">
-          <h2>Siz de Başarı Hikayemizin Parçası Olun</h2>
-          <p>Türkiye'nin en büyük lojistik firmalarının güvendiği sistem</p>
-          <button
-            className="btn-primary large"
-            onClick={() => setPage("quote")}
-          >
-            Ücretsiz Demo Talep Edin
-          </button>
-        </div>
-      </section>
-
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-bottom">
-            <p>&copy; 2024 Akna Lojistik. Tüm hakları saklıdır.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer setPage={setPage} />
     </div>
   );
 };
