@@ -3490,6 +3490,69 @@ body {
   }
 }
 
+/* References tab switcher */
+.tm-ref-tabs {
+  display: inline-flex;
+  gap: 3px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 4px;
+  margin-bottom: 28px;
+}
+
+.tm-ref-tab {
+  padding: 8px 20px;
+  border-radius: calc(var(--r-md) - 3px);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+
+.tm-ref-tab--active {
+  background: var(--dark-2);
+  color: var(--text-on-dark);
+  font-weight: 600;
+}
+
+.tm-ref-tab:not(.tm-ref-tab--active):hover {
+  color: var(--text-primary);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 480px) {
+  .tm-ref-tabs {
+    width: 100%;
+  }
+  .tm-ref-tab {
+    flex: 1;
+    text-align: center;
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
+
+/* Contact department icon */
+.dept-icon-wrap {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  margin: 0 auto 14px;
+  color: var(--text-secondary);
+}
+
 /* Tracking Page */
 .tracking-section {
   padding: 4rem 0;
