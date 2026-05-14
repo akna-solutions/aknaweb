@@ -29,7 +29,7 @@ const CITY_DIST = {
   "konya-adana": 340,
 };
 
-const BASE_RATES = { Kamyonet: 8, Tır: 6.2, Parsiyel: 4.8 };
+const BASE_RATES = { Kamyonet: 8, Tır: 6.2, Panelvan: 4.8 };
 
 const DURATIONS = [
   [100, 2],
@@ -66,14 +66,9 @@ const VEHICLES = [
     ),
   },
   {
-    id: "Parsiyel",
+    id: "Panelvan",
     sub: "Paylaşımlı",
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M3 12h18M12 6v13" stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 2" />
-      </svg>
-    ),
+    icon: <span role="img" aria-label="Panelvan" style={{ fontSize: 24, lineHeight: 1 }}>🚐</span>,
   },
 ];
 
@@ -126,7 +121,7 @@ function getDuration(km) {
 function calcPrice(dist, vtype, weight) {
   const base = (BASE_RATES[vtype] || 7) * dist;
   let wMul = weight > 0 ? Math.max(1, weight / 5) : 1;
-  if (vtype === "Parsiyel") wMul = Math.max(0.4, wMul * 0.5);
+  if (vtype === "Panelvan") wMul = Math.max(0.4, wMul * 0.5);
   const price = Math.round((base * wMul) / 100) * 100;
   return {
     price,
