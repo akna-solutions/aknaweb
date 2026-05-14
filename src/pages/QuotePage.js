@@ -67,8 +67,15 @@ const VEHICLES = [
   },
   {
     id: "Panelvan",
-    sub: "Paylaşımlı",
-    icon: <span role="img" aria-label="Panelvan" style={{ fontSize: 24, lineHeight: 1 }}>🚐</span>,
+    sub: "0–2 ton",
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <rect x="2" y="6" width="20" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M8 6v8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+        <circle cx="6" cy="18.5" r="1.8" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="18" cy="18.5" r="1.8" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+    ),
   },
 ];
 
